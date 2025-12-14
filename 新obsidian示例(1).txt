@@ -1,0 +1,497 @@
+local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+
+local Options = Library.Options
+local Toggles = Library.Toggles
+
+Library.ForceCheckbox = false
+Library.ShowToggleFrameInKeybinds = true
+
+local Window = Library:CreateWindow({
+	Title = "画图软件",
+	Footer = "版本: 示例",
+	Icon = 95816097006870,
+	NotifySide = "Right",
+	ShowCustomCursor = true,
+})
+
+local Tabs = {
+	Main = Window:AddTab("主界面", "user"),
+	Key = Window:AddKeyTab("密钥系统"),
+	["UI Settings"] = Window:AddTab("界面设置", "settings"),
+}
+
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox("功能组", "boxes")
+
+LeftGroupBox:AddToggle("MyToggle", {
+	Text = "这是一个开关",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Default = true,
+	Disabled = false,
+	Visible = true,
+	Risky = false,
+	Callback = function(Value)
+		print("[回调] 开关状态改变:", Value)
+	end,
+})
+	:AddColorPicker("ColorPicker1", {
+		Default = Color3.new(1, 0, 0),
+		Title = "颜色选择器1",
+		Transparency = 0,
+		Callback = function(Value)
+			print("[回调] 颜色改变!", Value)
+		end,
+	})
+	:AddColorPicker("ColorPicker2", {
+		Default = Color3.new(0, 1, 0),
+		Title = "颜色选择器2",
+		Callback = function(Value)
+			print("[回调] 颜色改变!", Value)
+		end,
+	})
+
+Toggles.MyToggle:OnChanged(function()
+	print("开关状态改变:", Toggles.MyToggle.Value)
+end)
+
+Toggles.MyToggle:SetValue(false)
+
+LeftGroupBox:AddCheckbox("MyCheckbox", {
+	Text = "这是一个复选框",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Default = true,
+	Disabled = false,
+	Visible = true,
+	Risky = false,
+	Callback = function(Value)
+		print("[回调] 复选框状态改变:", Value)
+	end,
+})
+
+Toggles.MyCheckbox:OnChanged(function()
+	print("复选框状态改变:", Toggles.MyCheckbox.Value)
+end)
+
+local MyButton = LeftGroupBox:AddButton({
+	Text = "按钮",
+	Func = function()
+		print("你点击了一个按钮！")
+	end,
+	DoubleClick = false,
+	Tooltip = "这是主按钮",
+	DisabledTooltip = "我已禁用！",
+	Disabled = false,
+	Visible = true,
+	Risky = false,
+})
+
+local MyButton2 = MyButton:AddButton({
+	Text = "子按钮",
+	Func = function()
+		print("你点击了一个子按钮！")
+	end,
+	DoubleClick = true,
+	Tooltip = "这是子按钮",
+	DisabledTooltip = "我已禁用！",
+})
+
+local MyDisabledButton = LeftGroupBox:AddButton({
+	Text = "禁用按钮",
+	Func = function()
+		print("你点击了一个禁用按钮！")
+	end,
+	DoubleClick = false,
+	Tooltip = "这是一个禁用按钮",
+	DisabledTooltip = "我已禁用！",
+	Disabled = true,
+})
+
+LeftGroupBox:AddLabel("这是一个标签")
+LeftGroupBox:AddLabel("这是一个可以换行的标签\n\n支持多行文本！", true)
+LeftGroupBox:AddLabel("测试标签", true, "TestLabel")
+LeftGroupBox:AddLabel("第二个测试标签", {
+	Text = "这是使用表格选项创建的标签",
+	DoesWrap = true,
+})
+
+LeftGroupBox:AddLabel("第二个测试标签", {
+	Text = "这是一个不换行的标签",
+	DoesWrap = false,
+})
+
+LeftGroupBox:AddDivider()
+
+LeftGroupBox:AddSlider("MySlider", {
+	Text = "这是我的滑块！",
+	Default = 0,
+	Min = 0,
+	Max = 5,
+	Rounding = 1,
+	Compact = false,
+	Callback = function(Value)
+		print("[回调] 滑块值改变！新值:", Value)
+	end,
+	Tooltip = "我是一个滑块！",
+	DisabledTooltip = "我已禁用！",
+	Disabled = false,
+	Visible = true,
+})
+
+local Number = Options.MySlider.Value
+Options.MySlider:OnChanged(function()
+	print("滑块值改变！新值:", Options.MySlider.Value)
+end)
+
+Options.MySlider:SetValue(3)
+
+LeftGroupBox:AddSlider("MySlider2", {
+	Text = "这是自定义显示滑块！",
+	Default = 0,
+	Min = 0,
+	Max = 5,
+	Rounding = 0,
+	Compact = false,
+	FormatDisplayValue = function(slider, value)
+		if value == slider.Max then return '全部' end
+		if value == slider.Min then return '无' end
+	end,
+	Tooltip = "我是一个滑块！",
+	DisabledTooltip = "我已禁用！",
+	Disabled = false,
+	Visible = true,
+})
+
+LeftGroupBox:AddInput("MyTextbox", {
+	Default = "我的文本框！",
+	Numeric = false,
+	Finished = false,
+	ClearTextOnFocus = true,
+	Text = "这是一个文本框",
+	Tooltip = "这是一个提示",
+	Placeholder = "占位符文本",
+	Callback = function(Value)
+		print("[回调] 文本更新。新文本:", Value)
+	end,
+})
+
+Options.MyTextbox:OnChanged(function()
+	print("文本更新。新文本:", Options.MyTextbox.Value)
+end)
+
+local DropdownGroupBox = Tabs.Main:AddRightGroupbox("下拉菜单")
+
+DropdownGroupBox:AddDropdown("MyDropdown", {
+	Values = { "这个", "是", "一个", "下拉菜单" },
+	Default = 1,
+	Multi = false,
+	Text = "下拉菜单",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Searchable = false,
+	Callback = function(Value)
+		print("[回调] 下拉菜单改变。新值:", Value)
+	end,
+	Disabled = false,
+	Visible = true,
+})
+
+Options.MyDropdown:OnChanged(function()
+	print("下拉菜单改变。新值:", Options.MyDropdown.Value)
+end)
+
+Options.MyDropdown:SetValue("这个")
+
+DropdownGroupBox:AddDropdown("MySearchableDropdown", {
+	Values = { "这个", "是", "一个", "可搜索", "下拉菜单" },
+	Default = 1,
+	Multi = false,
+	Text = "可搜索下拉菜单",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Searchable = true,
+	Callback = function(Value)
+		print("[回调] 下拉菜单改变。新值:", Value)
+	end,
+	Disabled = false,
+	Visible = true,
+})
+
+DropdownGroupBox:AddDropdown("MyDisplayFormattedDropdown", {
+	Values = { "这个", "是", "一个", "格式化", "下拉菜单" },
+	Default = 1,
+	Multi = false,
+	Text = "格式化显示下拉菜单",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	FormatDisplayValue = function(Value)
+		if Value == "格式化" then
+			return "显示格式化"
+		end
+		return Value
+	end,
+	Searchable = false,
+	Callback = function(Value)
+		print("[回调] 格式化下拉菜单改变。新值:", Value)
+	end,
+	Disabled = false,
+	Visible = true,
+})
+
+DropdownGroupBox:AddDropdown("MyMultiDropdown", {
+	Values = { "这个", "是", "一个", "下拉菜单" },
+	Default = 1,
+	Multi = true,
+	Text = "多选下拉菜单",
+	Tooltip = "这是一个提示",
+	Callback = function(Value)
+		print("[回调] 多选下拉菜单改变:")
+		for key, value in next, Options.MyMultiDropdown.Value do
+			print(key, value)
+		end
+	end,
+})
+
+Options.MyMultiDropdown:SetValue({
+	这个 = true,
+	是 = true,
+})
+
+DropdownGroupBox:AddDropdown("MyDisabledDropdown", {
+	Values = { "这个", "是", "一个", "下拉菜单" },
+	Default = 1,
+	Multi = false,
+	Text = "禁用下拉菜单",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Callback = function(Value)
+		print("[回调] 禁用下拉菜单改变。新值:", Value)
+	end,
+	Disabled = true,
+	Visible = true,
+})
+
+DropdownGroupBox:AddDropdown("MyDisabledValueDropdown", {
+	Values = { "这个", "是", "一个", "下拉菜单", "包含", "禁用", "选项" },
+	DisabledValues = { "禁用" },
+	Default = 1,
+	Multi = false,
+	Text = "包含禁用选项的下拉菜单",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Callback = function(Value)
+		print("[回调] 下拉菜单改变。新值:", Value)
+	end,
+	Disabled = false,
+	Visible = true,
+})
+
+DropdownGroupBox:AddDropdown("MyVeryLongDropdown", {
+	Values = {
+		"这个", "是", "一个", "非常", "长的", "下拉菜单",
+		"包含", "很多", "选项", "但是", "你可以", "看到",
+		"超过", "8个", "选项"
+	},
+	Default = 1,
+	Multi = false,
+	MaxVisibleDropdownItems = 12,
+	Text = "超长下拉菜单",
+	Tooltip = "这是一个提示",
+	DisabledTooltip = "我已禁用！",
+	Searchable = false,
+	Callback = function(Value)
+		print("[回调] 超长下拉菜单改变。新值:", Value)
+	end,
+	Disabled = false,
+	Visible = true,
+})
+
+DropdownGroupBox:AddDropdown("MyPlayerDropdown", {
+	SpecialType = "Player",
+	ExcludeLocalPlayer = true,
+	Text = "玩家下拉菜单",
+	Tooltip = "这是一个提示",
+	Callback = function(Value)
+		print("[回调] 玩家下拉菜单改变:", Value)
+	end,
+})
+
+DropdownGroupBox:AddDropdown("MyTeamDropdown", {
+	SpecialType = "Team",
+	Text = "队伍下拉菜单",
+	Tooltip = "这是一个提示",
+	Callback = function(Value)
+		print("[回调] 队伍下拉菜单改变:", Value)
+	end,
+})
+
+LeftGroupBox:AddLabel("颜色"):AddColorPicker("ColorPicker", {
+	Default = Color3.new(0, 1, 0),
+	Title = "颜色选择器",
+	Transparency = 0,
+	Callback = function(Value)
+		print("[回调] 颜色改变!", Value)
+	end,
+})
+
+Options.ColorPicker:OnChanged(function()
+	print("颜色改变!", Options.ColorPicker.Value)
+	print("透明度改变!", Options.ColorPicker.Transparency)
+end)
+
+Options.ColorPicker:SetValueRGB(Color3.fromRGB(0, 255, 140))
+
+LeftGroupBox:AddLabel("快捷键"):AddKeyPicker("KeyPicker", {
+	Default = "MB2",
+	SyncToggleState = false,
+	Mode = "Toggle",
+	Text = "自动开锁保险箱",
+	NoUI = false,
+	Callback = function(Value)
+		print("[回调] 快捷键点击!", Value)
+	end,
+	ChangedCallback = function(NewKey, NewModifiers)
+		print("[回调] 快捷键改变!", table.unpack(NewModifiers or {}), NewKey)
+	end,
+})
+
+Options.KeyPicker:OnClick(function()
+	print("快捷键点击!", Options.KeyPicker:GetState())
+end)
+
+Options.KeyPicker:OnChanged(function()
+	print("快捷键改变!", table.unpack(Options.KeyPicker.Modifiers or {}), Options.KeyPicker.Value)
+end)
+
+task.spawn(function()
+	while task.wait(1) do
+		local state = Options.KeyPicker:GetState()
+		if state then
+			print("快捷键被按住")
+		end
+
+		if Library.Unloaded then
+			break
+		end
+	end
+end)
+
+Options.KeyPicker:SetValue({ "MB2", "Hold" })
+
+local KeybindNumber = 0
+
+LeftGroupBox:AddLabel("按下快捷键"):AddKeyPicker("KeyPicker2", {
+	Default = "X",
+	Mode = "Press",
+	WaitForCallback = false,
+	Text = "增加数字",
+	Callback = function()
+		KeybindNumber = KeybindNumber + 1
+		print("[回调] 快捷键点击！数字增加到:", KeybindNumber)
+	end
+})
+
+local LeftGroupBox2 = Tabs.Main:AddLeftGroupbox("功能组 #2")
+LeftGroupBox2:AddLabel(
+	"这个标签跨越多行！我们要用完界面空间了...\n开玩笑的！向下滚动！\n\n\n你好，从下面来的！",
+	true
+)
+
+local TabBox = Tabs.Main:AddRightTabbox()
+
+local Tab1 = TabBox:AddTab("标签 1")
+Tab1:AddToggle("Tab1Toggle", { Text = "标签1开关" })
+
+local Tab2 = TabBox:AddTab("标签 2")
+Tab2:AddToggle("Tab2Toggle", { Text = "标签2开关" })
+
+Library:OnUnload(function()
+	print("已卸载！")
+end)
+
+Tabs.Key:AddLabel({
+	Text = "密钥: Banana",
+	DoesWrap = true,
+	Size = 16,
+})
+
+Tabs.Key:AddKeyBox("Banana", function(Success, ReceivedKey)
+	print("预期密钥: Banana - 收到密钥:", ReceivedKey, "| 成功:", Success)
+	Library:Notify({
+		Title = "预期密钥: Banana",
+		Description = "收到密钥: " .. ReceivedKey .. "\n成功: " .. tostring(Success),
+		Time = 4,
+	})
+end)
+
+Tabs.Key:AddLabel({
+	Text = "无密钥",
+	DoesWrap = true,
+	Size = 16,
+})
+
+Tabs.Key:AddKeyBox(function(Success, ReceivedKey)
+	print("预期密钥: 无 | 成功:", Success)
+	Library:Notify("成功: " .. tostring(Success), 4)
+end)
+
+local MenuGroup = Tabs["UI Settings"]:AddLeftGroupbox("菜单", "wrench")
+
+MenuGroup:AddToggle("KeybindMenuOpen", {
+	Default = Library.KeybindFrame.Visible,
+	Text = "打开快捷键菜单",
+	Callback = function(value)
+		Library.KeybindFrame.Visible = value
+	end,
+})
+MenuGroup:AddToggle("ShowCustomCursor", {
+	Text = "自定义光标",
+	Default = true,
+	Callback = function(Value)
+		Library.ShowCustomCursor = Value
+	end,
+})
+MenuGroup:AddDropdown("NotificationSide", {
+	Values = { "Left", "Right" },
+	Default = "Right",
+	Text = "通知位置",
+	Callback = function(Value)
+		Library:SetNotifySide(Value)
+	end,
+})
+MenuGroup:AddDropdown("DPIDropdown", {
+	Values = { "50%", "75%", "100%", "125%", "150%", "175%", "200%" },
+	Default = "100%",
+	Text = "DPI缩放",
+	Callback = function(Value)
+		Value = Value:gsub("%%", "")
+		local DPI = tonumber(Value)
+		Library:SetDPIScale(DPI)
+	end,
+})
+MenuGroup:AddDivider()
+MenuGroup:AddLabel("菜单快捷键")
+	:AddKeyPicker("MenuKeybind", { Default = "RightShift", NoUI = true, Text = "菜单快捷键" })
+
+MenuGroup:AddButton("卸载", function()
+	Library:Unload()
+end)
+
+Library.ToggleKeybind = Options.MenuKeybind
+
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({ "MenuKeybind" })
+
+ThemeManager:SetFolder("MyScriptHub")
+SaveManager:SetFolder("MyScriptHub/specific-game")
+SaveManager:SetSubFolder("specific-place")
+
+SaveManager:BuildConfigSection(Tabs["UI Settings"])
+ThemeManager:ApplyToTab(Tabs["UI Settings"])
+SaveManager:LoadAutoloadConfig()
